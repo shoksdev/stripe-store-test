@@ -1,0 +1,38 @@
+{% extends 'layout/base.html' %}
+
+{% block script %}
+    <script type="text/javascript">
+        // Get Stripe publishable key
+        fetch("/config/")
+        .then((result) => { return result.json(); })
+        .then((data) => {
+          // Initialize Stripe.js
+          const stripe = Stripe(data.publicKey);
+
+          // new
+          // Event handler
+          document.querySelector("#submitBtn").addEventListener("click", () => {
+            // Get Checkout Session ID
+            fetch("{% url 'buy' item.id %}")
+            .then((result) => { return result.json(); })
+            .then((data) => {
+              console.log(data);
+              // Redirect to Stripe Checkout
+              return stripe.redirectToCheckout({sessionId: data.sessionId})
+            })
+            .then((res) => {
+              console.log(res);
+            });
+          });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+  <h2>Information about {{ item.name }}</h2>
+  <p>Name: {{ item.name }}</p>
+  <p>Description: {{ item.description }}</p>
+  <p>Price: {{ item.price }}</p>
+  <p>Your currency of payment (if you want to change the currency - go to your profile): {{ user.get_currency_display }}</p>
+  <button class="btn btn-primary" id="submitBtn">Buy!</button>
+{% endblock %}

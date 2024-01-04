@@ -1,0 +1,42 @@
+{% extends 'layout/base.html' %}
+
+{% block script %}
+    <script type="text/javascript">
+        // Get Stripe publishable key
+        fetch("/config/")
+        .then((result) => { return result.json(); })
+        .then((data) => {
+          // Initialize Stripe.js
+          const stripe = Stripe(data.publicKey);
+
+          // new
+          // Event handler
+          document.querySelector("#submitBtn").addEventListener("click", () => {
+            // Get Checkout Session ID
+            fetch("{% url 'order_buy' order.id %}")
+            .then((result) => { return result.json(); })
+            .then((data) => {
+              console.log(data);
+              // Redirect to Stripe Checkout
+              return stripe.redirectToCheckout({sessionId: data.sessionId})
+            })
+            .then((res) => {
+              console.log(res);
+            });
+          });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+  <h2>Order number {{ order.id }}</h2>
+  <p>Items in order:</p>
+  <p>-------------------------------------------</p>
+  {% for item in order.items.all %}
+      <p>Name: <a href="{% url 'item_detail' pk=item.id %}">{{ item.name }}</a></p>
+      <p>Description: {{ item.description }}</p>
+      <p>Price: {{ item.price }}</p>
+      <p>-------------------------------------------</p>
+  {% endfor %}
+  <button class="btn btn-primary" id="submitBtn">Buy!</button>
+{% endblock %}

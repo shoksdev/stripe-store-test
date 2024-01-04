@@ -1,0 +1,21 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+  <h2>Information about all your orders</h2>
+  {% if orders_list %}
+    {% for order in orders_list %}
+        <p><a href="{% url 'order_detail' pk=order.id %}">Order's ID: {{ order.id }}</a></p>
+        <p>Items in order:</p>
+        <p>-------------------------------------------</p>
+        {% for item in order.items.all %}
+            <p>Name: <a href="{% url 'item_detail' pk=item.id %}">{{ item.name }}</a></p>
+            <p>Description: {{ item.description }}</p>
+            <p>Price: {{ item.price }}</p>
+            <p>-------------------------------------------</p>
+        {% endfor %}
+        <p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
+    {% endfor %}
+  {% else %}
+    <p>There are currently no orders on your account.</p>
+  {% endif %}
+{% endblock %}

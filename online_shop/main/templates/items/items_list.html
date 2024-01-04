@@ -1,0 +1,14 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+  <h2>Information about all items</h2>
+  {% if items_list %}
+    {% for item in items_list %}
+      <p><a href="{% url 'item_detail' pk=item.id %}">Name: {{ item.name }}</a></p>
+      <p>Description: {{ item.description }}</p>
+      <p>Price: {{ item.price }}</p>
+    {% endfor %}
+  {% else %}
+    <p>There are currently no items on the site.</p>
+  {% endif %}
+{% endblock %}
